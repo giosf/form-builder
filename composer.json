@@ -1,0 +1,36 @@
+{
+    "name": "giosf/form-builder",
+    "description": "A laravel form builder with components",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Giosf\\FormBuilder\\": "src/"
+        }
+    },
+	"authors": [
+		{
+			"name": "Giovanni Stroppa",
+			"email": "giosfdev@gmail.com"
+		}
+	],
+	"repositories": [
+		{
+			"type": "git",
+			"url":	"git@github.com:giosf/form-builder.git"
+		}
+	],
+    "minimum-stability": "alpha",
+    "require": {
+        "php": ">=8.3",
+        "laravel/framework": "^10.10"
+    },
+    "extra": {
+		"laravel": {
+			"providers": [
+				"Giosf\\FormBuilder\\ServiceProvider"
+			]
+		}
+	}
+
+}
