@@ -9,7 +9,7 @@ class ServiceProvider extends BaseServiceProvider
 
 	public function boot(): void
 	{
-		$this->loadViewsFrom(__DIR__.'/views', 'form-builder');
+		$this->loadViewsFrom(__DIR__.'/resources/views/', 'form-builder');
 	}
 
 }

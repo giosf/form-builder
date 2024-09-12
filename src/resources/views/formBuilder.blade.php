@@ -29,7 +29,7 @@
 			Atualizado com sucesso
 		</div>
 	@endif
-	<form action="{{ $route }}" method="POST" enctype="multipart/form-data">
+	<form id="form-builder" action="{{ $route }}" method="POST" enctype="multipart/form-data">
 
 		@csrf
 

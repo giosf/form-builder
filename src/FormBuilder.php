@@ -1,11 +1,10 @@
 <?php
 
-namespace App\View\Components;
+namespace Giosf\FormBuilder;
 
 use Illuminate\View\Component;
 use Illuminate\View\View;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scenario;
 
 class FormBuilder extends Component
 {
@@ -14,27 +13,26 @@ class FormBuilder extends Component
 	private $route;
 	private $method;
 	private $formTitle;
+	private $formFields;
 	protected $formHeader;
 
-	public function __construct(Model $entity, string $route, string $method, View|array|null $formHeader, ?string $formTitle = '', ?array $formFields = null)
+	public function __construct(Model $entity, string $route, string $method, View|array|null $formHeader)
 	{
 		$this->entity = $entity;
 		$this->route = $route;
 		$this->method = $method;
-		$fieldsData = method_exists($this->entity, 'getFormFields') ? $this->entity->getFormFields() : $formFields;
 		$this->formHeader = $formHeader;
-		$this->formTitle = $formTitle;
-		$this->view = $this->buildForm($fieldsData);
+		$this->view = $this->buildForm();
 	}
 
-	public function buildForm(array $formFields)
+	public function buildForm()
 	{
 		$fields = [];
-		foreach ($formFields as $fieldName => $attributes)
+		foreach ($this->formFields as $fieldName => $attributes)
 		{
 			if ('input' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.input')
+				$fields[] = view('form-builder::input')
 					->with('value', $this->entity->$fieldName)
 					->with('label', $attributes['label'])
 					->with('width', $attributes['width'])
@@ -45,14 +43,14 @@ class FormBuilder extends Component
 			}
 			if ('inputfile' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.input-file')
+				$fields[] = view('form-builder::input-file')
 					->with('label', $attributes['label'])
 					->with('width', $attributes['width'])
 					->with('fieldName', $fieldName);
 			}
 			if ('email' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.input-email')
+				$fields[] = view('form-builder::input-email')
 					->with('value', $this->entity->$fieldName)
 					->with('label', $attributes['label'])
 					->with('width', $attributes['width'])
@@ -61,7 +59,7 @@ class FormBuilder extends Component
 			}
 			if ('textarea' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.textarea')
+				$fields[] = view('form-builder::textarea')
 					->with('value', $this->entity->$fieldName)
 					->with('width', $attributes['width'])
 					->with('fieldName', $fieldName)
@@ -69,16 +67,17 @@ class FormBuilder extends Component
 			}
 			if ('textareaJS' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.textareaJS')
+				$fields[] = view('form-builder::textareaJS')
 					->with('width', $attributes['width'])
+					->with('value', $this->entity->$fieldName)
 				// ->with('hideFields', null)
 					// ->with('value', $value)
-					// ->with('fieldName', $fieldName)
+					->with('fieldName', $fieldName)
 					->with('attributes', $attributes);
 			}
 			if ('select' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.select')
+				$fields[] = view('form-builder::select')
 					->with('value', $this->entity->$fieldName)
 					->with('options', $attributes['options'])
 					->with('width', $attributes['width'])
@@ -88,7 +87,7 @@ class FormBuilder extends Component
 			}
 			if ('datalist' == $attributes['type'])
 			{
-				$fields[] = view('formBuilder.datalist')
+				$fields[] = view('form-builder::datalist')
 					->with('value', $this->entity->$fieldName)
 					->with('options', $attributes['options'])
 					->with('width', $attributes['width'])
@@ -98,7 +97,7 @@ class FormBuilder extends Component
 			if ('date' == $attributes['type'])
 			{
 				$value = $this->entity->$fieldName ? $this->entity->$fieldName->format('Y-m-d') : null;
-				$fields[] = view('formBuilder.date')
+				$fields[] = view('form-builder::date')
 					->with('value', $value)
 					->with('width', $attributes['width'])
 					->with('fieldName', $fieldName)
@@ -107,7 +106,7 @@ class FormBuilder extends Component
 			if ('datetime' == $attributes['type'])
 			{
 				$value = $this->entity->$fieldName ? $this->entity->$fieldName->format('Y-m-d\Th:i:s') : null;
-				$fields[] = view('formBuilder.datetime')
+				$fields[] = view('form-builder::datetime')
 					->with('value', $value)
 					->with('width', $attributes['width'])
 					->with('fieldName', $fieldName)
@@ -116,7 +115,7 @@ class FormBuilder extends Component
 			if ('switcher' == $attributes['type'])
 			{
 				$value = $this->entity->$fieldName ? $this->entity->$fieldName->format('Y-m-d') : null;
-				$fields[] = view('formBuilder.switcher')
+				$fields[] = view('form-builder::switcher')
 					->with('hideFields', null)
 					->with('value', $value)
 					->with('fieldName', $fieldName)
@@ -124,7 +123,7 @@ class FormBuilder extends Component
 			}
 		}
 
-		return view('formBuilder.formBuilder')
+		return view('form-builder::formBuilder')
 			->with('entity', $this->entity)
 			->with('formHeader', isset($this->formHeader) ? $this->formHeader : null)
 			->with('fields', $fields)
@@ -136,5 +135,15 @@ class FormBuilder extends Component
 	public function render()
 	{
 		return $this->view->render();
+	}
+
+	public function setFormFields(array $fields)
+	{
+		$this->formFields = $fields;
+	}
+
+	public function setFormTitle(string $title)
+	{
+		$this->formTitle = $formTitle;
 	}
 }
