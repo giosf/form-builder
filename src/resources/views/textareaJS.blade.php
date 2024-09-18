@@ -1,4 +1,4 @@
-<div class="w-100 textareajs">
+<div class="w-75 textareajs">
     <span class="input-group-text">{{ $attributes['label'] }}</span>
     <div id="editor">
     </div>
